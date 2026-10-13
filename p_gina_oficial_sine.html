@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SINE - Sistema Integral de Evangelización</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sineRed: '#E52421',
+                        sineYellow: '#FCD116',
+                        sineDark: '#1E1E1E',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .bg-sine-gradient {
+            background: linear-gradient(135deg, #E52421 0%, #B40F0C 100%);
+        }
+        .hero-pattern {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e52421 0.6px, transparent 0.6px), radial-gradient(#e52421 0.6px, #ffffff 0.6px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            opacity: 0.06;
+        }
+        .editable-field:hover {
+            outline: 2px dashed #FCD116;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Admin Banner -->
+    <div id="adminBanner" class="hidden bg-sineYellow text-sineDark px-4 py-2 font-bold text-center text-sm shadow-inner flex justify-between items-center transition-all">
+        <span><i class="fa-solid fa-wrench mr-2"></i> <strong>MODO ADMINISTRADOR ACTIVO:</strong> Haz clic en el icono de lápiz o sobre los textos editables para personalizar el contenido.</span>
+        <button onclick="toggleAdminMode()" class="px-3 py-1 bg-sineDark text-white rounded text-xs hover:bg-black">Salir del modo edición</button>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo Oficial -->
+                <a href="#inicio" class="flex items-center space-x-3 group">
+                    <div class="h-14 w-12 flex items-center justify-center p-1 bg-white rounded-lg shadow-sm border border-gray-100 group-hover:scale-105 transition-transform">
+                        <svg viewBox="0 0 200 280" class="w-full h-full">
+                            <!-- Llama roja -->
+                            <path d="M100,0 C120,40 160,50 170,100 C185,160 170,220 130,260 C90,300 30,270 10,210 C-10,150 20,90 80,50 C90,45 80,20 100,0 Z" fill="#E52421"/>
+                            <!-- Paloma Blanca arriba -->
+                            <path d="M70,95 C75,80 90,75 105,80 C110,70 120,80 115,85 C125,90 120,100 110,100 C100,110 80,110 70,95 Z" fill="#FFFFFF"/>
+                            <!-- Cruz -->
+                            <path d="M30,150 L180,150 L180,170 L140,170 L140,240 L120,240 L120,170 L30,170 Z" fill="#1A1A1A" stroke="#FFFFFF" stroke-width="4"/>
+                            <!-- Texto SINE -->
+                            <text x="25" y="215" font-family="'Arial Black', sans-serif" font-weight="900" font-size="52" fill="#FCD116">SINE</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-black tracking-wider text-sineRed block leading-none">SINE</span>
+                        <span class="text-xs text-gray-500 font-semibold tracking-tight">Sistema Integral de Evangelización</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-gray-700">
+                    <a href="#inicio" class="hover:text-sineRed transition-colors">Inicio</a>
+                    <a href="#nosotros" class="hover:text-sineRed transition-colors">¿Qué es SINE?</a>
+                    <a href="#pilares" class="hover:text-sineRed transition-colors">Pilares</a>
+                    <a href="#eventos" class="hover:text-sineRed transition-colors">Eventos</a>
+                    <a href="#oracion" class="hover:text-sineRed transition-colors">Peticiones</a>
+                    <a href="#contacto" class="hover:text-sineRed transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Admin Access & Actions -->
+                <div class="hidden sm:flex items-center space-x-3">
+                    <button id="adminToggleBtn" onclick="toggleAdminMode()" class="px-4 py-2 text-xs font-bold rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-all shadow-sm">
+                        <i class="fa-solid fa-gear text-sineRed"></i> <span id="adminBtnText">Personalizar Sitio</span>
+                    </button>
+                    <a href="#oracion" class="px-5 py-2.5 bg-sineRed hover:bg-red-700 text-white text-sm font-bold rounded-xl shadow-md transition-all hover:shadow-lg">
+                        Intención de Oración
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center space-x-2">
+                    <button onclick="toggleAdminMode()" class="p-2 text-xs font-bold rounded-lg border border-gray-200 text-gray-700">
+                        <i class="fa-solid fa-gear text-sineRed"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg text-gray-600 hover:text-sineRed focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-2 shadow-lg">
+            <a href="#inicio" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">Inicio</a>
+            <a href="#nosotros" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">¿Qué es el SINE?</a>
+            <a href="#pilares" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">Pilares</a>
+            <a href="#eventos" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">Eventos</a>
+            <a href="#oracion" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">Pedir Oración</a>
+            <a href="#contacto" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-sineRed">Contacto</a>
+        </div>
+    </header>
+
+    <section id="inicio" class="relative bg-sine-gradient text-white overflow-hidden py-20 lg:py-28">
+        <div class="absolute inset-0 hero-pattern"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-center lg:text-left">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-sineYellow text-sineDark font-extrabold text-xs tracking-wider uppercase shadow-md">
+                        Evangelización Parroquial Integral
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                        Formando <span class="text-sineYellow">Comunidades</span> Vivas y Misioneras
+                    </h1>
+                    <p class="text-lg text-red-50 font-normal leading-relaxed max-w-xl mx-auto lg:mx-0">
+                        El Sistema Integral de Evangelización (SINE) renueva la vida parroquial a través de la evangelización permanente, el discipulado y la vida comunitaria en pequeñas comunidades.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                        <a href="#nosotros" class="px-8 py-4 bg-sineYellow text-sineDark font-bold rounded-xl hover:bg-yellow-400 transition-all shadow-lg hover:shadow-xl text-center">
+                            Conocer Más
+                        </a>
+                        <a href="#eventos" class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-xl transition-all text-center backdrop-blur-sm">
+                            Próximos Retiros
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mascot/Logo Large Display Card -->
+                <div class="flex justify-center">
+                    <div class="bg-white p-8 sm:p-12 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-sineYellow relative transform hover:scale-105 transition-all">
+                        <div class="w-40 h-52 mx-auto mb-6">
+                            <svg viewBox="0 0 200 280" class="w-full h-full drop-shadow-md">
+                                <path d="M100,0 C120,40 160,50 170,100 C185,160 170,220 130,260 C90,300 30,270 10,210 C-10,150 20,90 80,50 C90,45 80,20 100,0 Z" fill="#E52421"/>
+                                <path d="M70,95 C75,80 90,75 105,80 C110,70 120,80 115,85 C125,90 120,100 110,100 C100,110 80,110 70,95 Z" fill="#FFFFFF"/>
+                                <path d="M30,150 L180,150 L180,170 L140,170 L140,240 L120,240 L120,170 L30,170 Z" fill="#1A1A1A" stroke="#FFFFFF" stroke-width="4"/>
+                                <text x="25" y="215" font-family="'Arial Black', sans-serif" font-weight="900" font-size="52" fill="#FCD116">SINE</text>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-black text-sineDark mb-1">Logotipo Oficial SINE</h3>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Llama • Cruz • Paloma • SINE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="nosotros" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-black tracking-widest text-sineRed uppercase mb-3">Identidad Parroquial</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-sineDark">¿Qué es el Sistema Integral de Evangelización?</h3>
+                <div class="w-16 h-1.5 bg-sineYellow mx-auto my-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-sineRed/30 transition-all hover:shadow-xl group">
+                    <div class="w-14 h-14 bg-red-100 text-sineRed rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-sineRed group-hover:text-white transition-all">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-sineDark mb-3">Kerygma y Conversión</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Anuncio vivo del Evangelio para experimentar el encuentro personal con Jesucristo resucitado y la efusión del Espíritu Santo.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-sineRed/30 transition-all hover:shadow-xl group">
+                    <div class="w-14 h-14 bg-yellow-100 text-sineDark rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-sineYellow transition-all">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-sineDark mb-3">Pequeñas Comunidades</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        La parroquia organizada en pequeñas comunidades eclesiales donde se vive la fe, la fraternidad, la oración y la enseñanza.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-sineRed/30 transition-all hover:shadow-xl group">
+                    <div class="w-14 h-14 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-sineDark group-hover:text-white transition-all">
+                        <i class="fa-solid fa-cross"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-sineDark mb-3">Misión Permanente</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Formación de discípulos misioneros comprometidos en la evangelización casa por casa y en su entorno social.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pilares" class="py-20 bg-slate-900 text-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-sineYellow text-xs font-black uppercase tracking-widest">Bases Fundamentales</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mt-2">Los Pilares del SINE</h2>
+                <div class="w-16 h-1 bg-sineRed mx-auto my-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-3xl font-black text-sineYellow mb-2 block">01</span>
+                    <h3 class="text-lg font-bold text-white mb-2">Catequesis de Adultos</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Proceso perseverante de formación doctrinal y espiritual sistemática.</p>
+                </div>
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-3xl font-black text-sineYellow mb-2 block">02</span>
+                    <h3 class="text-lg font-bold text-white mb-2">Oración y Liturgia</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Vida sacramental activa y oración diaria comunitaria y personal.</p>
+                </div>
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-3xl font-black text-sineYellow mb-2 block">03</span>
+                    <h3 class="text-lg font-bold text-white mb-2">Edificación Fraterna</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Acompañamiento, testimonios y apoyo mutuo entre hermanos.</p>
+                </div>
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-3xl font-black text-sineYellow mb-2 block">04</span>
+                    <h3 class="text-lg font-bold text-white mb-2">Misión Sectorizada</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">Presencia activa en barrios, sectores y comunidades.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="eventos" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-sineDark">Próximos Eventos y Retiros</h2>
+                    <p class="text-gray-500 text-sm mt-1">Participa en nuestras actividades de formación y renovación espiritual.</p>
+                </div>
+                <button id="addEventBtn" onclick="addNewEvent()" class="hidden mt-4 md:mt-0 px-4 py-2 bg-sineRed text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all">
+                    <i class="fa-solid fa-plus mr-1"></i> Añadir Evento
+                </button>
+            </div>
+
+            <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Event 1 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                    <div class="bg-sineRed text-white p-4 font-bold flex justify-between items-center">
+                        <span>Retiro de Evangelización</span>
+                        <span class="bg-sineYellow text-sineDark text-xs px-2.5 py-1 rounded-full font-black">SINE</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-xs font-bold text-sineRed uppercase mb-1"><i class="fa-regular fa-calendar mr-1"></i> Próximo Mes</p>
+                        <h3 class="text-lg font-bold text-sineDark mb-2">Retiro Kerygmático Parroquial</h3>
+                        <p class="text-gray-600 text-xs mb-4">Experiencia fundamental del amor de Dios y efusión del Espíritu Santo para nuevos integrantes.</p>
+                        <div class="border-t border-gray-100 pt-4 flex justify-between items-center text-xs text-gray-500">
+                            <span><i class="fa-solid fa-location-dot mr-1 text-sineRed"></i> Salón Parroquial</span>
+                            <span class="font-bold text-sineDark">Inscripciones Abiertas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 2 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                    <div class="bg-sineDark text-white p-4 font-bold flex justify-between items-center">
+                        <span>Escuela de Formación</span>
+                        <span class="bg-sineYellow text-sineDark text-xs px-2.5 py-1 rounded-full font-black">Semanal</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-xs font-bold text-sineRed uppercase mb-1"><i class="fa-regular fa-clock mr-1"></i> Todos los Martes</p>
+                        <h3 class="text-lg font-bold text-sineDark mb-2">Formación de Servidores y Líderes</h3>
+                        <p class="text-gray-600 text-xs mb-4">Capacitación pedagógica y pastoral para catequistas y jefes de sector.</p>
+                        <div class="border-t border-gray-100 pt-4 flex justify-between items-center text-xs text-gray-500">
+                            <span><i class="fa-solid fa-location-dot mr-1 text-sineRed"></i> Templo Principal</span>
+                            <span class="font-bold text-sineDark">7:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                    <div class="bg-sineYellow text-sineDark p-4 font-black flex justify-between items-center">
+                        <span>Asamblea Comunitaria</span>
+                        <span class="bg-sineRed text-white text-xs px-2.5 py-1 rounded-full font-bold">General</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-xs font-bold text-sineRed uppercase mb-1"><i class="fa-regular fa-calendar mr-1"></i> Primer Sábado</p>
+                        <h3 class="text-lg font-bold text-sineDark mb-2">Asamblea General de Comunidades</h3>
+                        <p class="text-gray-600 text-xs mb-4">Encuentro de alabanza, testimonio y compartir fraterno entre todas las pequeñas comunidades.</p>
+                        <div class="border-t border-gray-100 pt-4 flex justify-between items-center text-xs text-gray-500">
+                            <span><i class="fa-solid fa-location-dot mr-1 text-sineRed"></i> Cancha Parroquial</span>
+                            <span class="font-bold text-sineDark">5:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="oracion" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-sineRed/20 rounded-full blur-2xl"></div>
+                
+                <div class="text-center max-w-xl mx-auto mb-8">
+                    <span class="text-sineYellow text-xs font-black uppercase tracking-widest">Ministerio de Intercesión</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Envía tus Intenciones de Oración</h2>
+                    <p class="text-gray-400 text-xs mt-2">Nuestras pequeñas comunidades orarán por tus necesidades en las próximas asambleas.</p>
+                </div>
+
+                <form onsubmit="handlePrayerSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" placeholder="Tu Nombre (Opcional)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sineYellow">
+                        <input type="text" placeholder="Teléfono o Correo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sineYellow">
+                    </div>
+                    <textarea rows="4" placeholder="Escribe aquí tu petición de oración o acción de gracias..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sineYellow"></textarea>
+                    <button type="submit" class="w-full py-4 bg-sineRed hover:bg-red-600 text-white font-bold rounded-xl shadow-lg transition-all text-sm tracking-wide">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Petición
+                    </button>
+                </form>
+
+                <div id="prayerSuccess" class="hidden mt-4 p-4 bg-emerald-900/80 border border-emerald-500 rounded-xl text-center text-xs text-emerald-200">
+                    <i class="fa-solid fa-check-circle mr-1"></i> ¡Tu intención ha sido enviada con éxito! Las comunidades estarán orando por ti.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacto" class="bg-sineDark text-white pt-16 pb-12 border-t-4 border-sineRed">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Columna 1 -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-9 bg-white p-1 rounded">
+                            <svg viewBox="0 0 200 280" class="w-full h-full">
+                                <path d="M100,0 C120,40 160,50 170,100 C185,160 170,220 130,260 C90,300 30,270 10,210 C-10,150 20,90 80,50 C90,45 80,20 100,0 Z" fill="#E52421"/>
+                                <path d="M70,95 C75,80 90,75 105,80 C110,70 120,80 115,85 C125,90 120,100 110,100 C100,110 80,110 70,95 Z" fill="#FFFFFF"/>
+                                <path d="M30,150 L180,150 L180,170 L140,170 L140,240 L120,240 L120,170 L30,170 Z" fill="#1A1A1A" stroke="#FFFFFF" stroke-width="4"/>
+                                <text x="25" y="215" font-family="'Arial Black', sans-serif" font-weight="900" font-size="52" fill="#FCD116">SINE</text>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-black text-white">SINE</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Sistema Integral de Evangelización. Un camino de renovación parroquial y formación de pequeñas comunidades.
+                    </p>
+                </div>
+
+                <!-- Columna 2 -->
+                <div>
+                    <h4 class="text-sm font-bold text-sineYellow uppercase tracking-wider mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li><a href="#inicio" class="hover:text-sineRed transition-colors">Inicio</a></li>
+                        <li><a href="#nosotros" class="hover:text-sineRed transition-colors">¿Qué es el SINE?</a></li>
+                        <li><a href="#pilares" class="hover:text-sineRed transition-colors">Nuestros Pilares</a></li>
+                        <li><a href="#eventos" class="hover:text-sineRed transition-colors">Retiros e Inscripciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 3 -->
+                <div>
+                    <h4 class="text-sm font-bold text-sineYellow uppercase tracking-wider mb-4">Contacto Parroquial</h4>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li><i class="fa-solid fa-church mr-2 text-sineRed"></i> Despacho Parroquial</li>
+                        <li><i class="fa-solid fa-phone mr-2 text-sineRed"></i> +58 (000) 000-0000</li>
+                        <li><i class="fa-solid fa-envelope mr-2 text-sineRed"></i> contacto@sineparroquia.org</li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4 -->
+                <div>
+                    <h4 class="text-sm font-bold text-sineYellow uppercase tracking-wider mb-4">Personalización</h4>
+                    <p class="text-xs text-slate-400 mb-3">Activa el panel de administración para editar los textos directamente.</p>
+                    <button onclick="toggleAdminMode()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-sineYellow">
+                        <i class="fa-solid fa-sliders mr-1"></i> Modo Edición
+                    </button>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; Sistema Integral de Evangelización (SINE). Todos los derechos reservados.</p>
+                <div class="flex space-x-4 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-sineYellow"><i class="fa-brands fa-facebook text-base"></i></a>
+                    <a href="#" class="hover:text-sineYellow"><i class="fa-brands fa-instagram text-base"></i></a>
+                    <a href="#" class="hover:text-sineYellow"><i class="fa-brands fa-youtube text-base"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let isAdmin = false;
+
+        function toggleAdminMode() {
+            isAdmin = !isAdmin;
+            const banner = document.getElementById('adminBanner');
+            const btnText = document.getElementById('adminBtnText');
+            const addEventBtn = document.getElementById('addEventBtn');
+
+            if (isAdmin) {
+                banner.classList.remove('hidden');
+                btnText.innerText = 'Desactivar Edición';
+                addEventBtn.classList.remove('hidden');
+                document.body.classList.add('admin-active');
+                enableContentEditing(true);
+            } else {
+                banner.classList.add('hidden');
+                btnText.innerText = 'Personalizar Sitio';
+                addEventBtn.classList.add('hidden');
+                document.body.classList.remove('admin-active');
+                enableContentEditing(false);
+            }
+        }
+
+        function enableContentEditing(enable) {
+            const headings = document.querySelectorAll('h1, h2, h3, h4, p');
+            headings.forEach(el => {
+                if (enable) {
+                    el.contentEditable = "true";
+                    el.classList.add('editable-field');
+                } else {
+                    el.contentEditable = "false";
+                    el.classList.remove('editable-field');
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function handlePrayerSubmit(e) {
+            e.preventDefault();
+            const successMsg = document.getElementById('prayerSuccess');
+            successMsg.classList.remove('hidden');
+            e.target.reset();
+            setTimeout(() => {
+                successMsg.classList.add('hidden');
+            }, 5000);
+        }
+
+        function addNewEvent() {
+            const grid = document.getElementById('eventsGrid');
+            const newEvent = document.createElement('div');
+            newEvent.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all";
+            newEvent.innerHTML = `
+                <div class="bg-sineRed text-white p-4 font-bold flex justify-between items-center">
+                    <span contenteditable="true">Nuevo Evento SINE</span>
+                    <span class="bg-sineYellow text-sineDark text-xs px-2.5 py-1 rounded-full font-black">Nuevo</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-xs font-bold text-sineRed uppercase mb-1"><i class="fa-regular fa-calendar mr-1"></i> Fecha por Definir</p>
+                    <h3 contenteditable="true" class="text-lg font-bold text-sineDark mb-2">Título del Evento Editable</h3>
+                    <p contenteditable="true" class="text-gray-600 text-xs mb-4">Escribe la descripción de la actividad o retiro parroquial aquí.</p>
+                    <div class="border-t border-gray-100 pt-4 flex justify-between items-center text-xs text-gray-500">
+                        <span contenteditable="true"><i class="fa-solid fa-location-dot mr-1 text-sineRed"></i> Lugar</span>
+                        <span contenteditable="true" class="font-bold text-sineDark">Hora</span>
+                    </div>
+                </div>
+            `;
+            grid.prepend(newEvent);
+            if (isAdmin) enableContentEditing(true);
+        }
+    </script>
+</body>
+</html>
